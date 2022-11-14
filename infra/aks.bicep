@@ -133,7 +133,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-07-01' = {
 }
 
 module _ 'aksRoleAssignments.bicep' = {
-  name: '${deployment().name}-aks-roleAssignments'
+  name: '${deployment().name}-roleAssignments'
   params: {
     aksName: aks.name
     nodeResourceGroup: nodeResourceGroup
