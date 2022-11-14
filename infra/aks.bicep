@@ -36,7 +36,7 @@ param logAnalyticsWorkspaceId string
 param profileAdminUsername string = 'azureuser'
 
 @description('Optional. Override resource group name, used to deploy cluster node resources.')
-param nodeResourceGroup string = '${resourceGroup().name}_aks'
+param nodeResourceGroup string = '${resourceGroup().name}-aks'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' existing = {
   name: virtualNetworkName
@@ -71,7 +71,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-07-01' = {
         count: 1
         vmSize: 'Standard_B4ms'
         osDiskSizeGB: 128
-        osDiskType: 'Ephemeral'
+        osDiskType: 'Managed'
         maxPods: systemPoolMaxPods
         osType: 'Linux'
         mode: 'System'
