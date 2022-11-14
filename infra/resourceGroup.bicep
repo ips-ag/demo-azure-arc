@@ -1,10 +1,10 @@
 targetScope = 'subscription'
 
-@description('Required. Resource group location.')
+@description('Required. Resource group name.')
 param name string
 
-@description('Required. Resource group name.')
-param location string
+@description('Optional. Resource Group location. Default is westeurope.')
+param location string = 'westeurope'
 
 @description('Required. Indicator whether AKS cluster already exists.')
 param clusterExists bool

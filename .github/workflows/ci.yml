@@ -10,6 +10,7 @@ jobs:
     name: Deploy Infrastructure
     environment: Dev
     env:
+      resourceGroupName: rg-demo-azure-arc
       aksClusterName: aks-demo-azure-arc
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +25,7 @@ jobs:
         with:
           inlineScript: |
             $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
-            az deployment sub create --name demo-azure-arc --location westeurope --template-file resourceGroup.bicep aksClusterExists=$aksClusterExists
+            az deployment sub create --name demo-azure-arc --location westeurope --template-file resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
 
       # - name: Deploy Infrastructure
       #   uses: azure/arm-deploy@v1

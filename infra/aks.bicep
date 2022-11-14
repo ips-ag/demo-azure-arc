@@ -14,8 +14,6 @@ param clusterExists bool
 param virtualNetworkName string
 
 @allowed([
-  '1.22.4'
-  '1.24.3'
   '1.24.6'
 ])
 @description('Optional. Version of Kubernetes specified when creating the managed cluster.')
@@ -28,47 +26,8 @@ param systemPoolName string = 'sys'
   30
   50
 ])
-@description('Optional. Maximum number of pods allocated to system pool. Default is 30.')
-param systemPoolMaxPods int = 30
-
-@description('Optional. Name of user node pool. Default is \'win\'.')
-param userPoolNameWindows string = 'win'
-
-@description('Optional. Name of user node pool. Default is \'lin\'.')
-param userPoolNameLinux string = 'lin'
-
-@allowed([
-  '1.22.4'
-  '1.23.8'
-  '1.24.3'
-  '1.24.6'
-])
-@description('Optional. Version of Kubernetes used for user node pool. Default value is cluster Kubernetes version.')
-param userPoolOrchestratorVersion string = kubernetesVersion
-
-@allowed([
-  'Standard_B2ms'
-  'Standard_B4ms'
-])
-@description('Optional. User pool VMSS instance size. Default is \'Standard_B4ms\'.')
-param userPoolVmSize string = 'Standard_B4ms'
-
-@description('Optional. User poll VMSS instance count. Default is 1.')
-param userPoolVmCount int = 1
-
-@allowed([
-  'Managed'
-  'Ephemeral'
-])
-@description('Optional. The default is \'Managed\'. May not be changed after creation. For more information see Ephemeral OS (https://docs.microsoft.com/en-us/azure/aks/cluster-configuration#ephemeral-os).')
-param userPoolOsDiskType string = 'Managed'
-
-@allowed([
-  32
-  128
-])
-@description('Optional. OS Disk Size in GB to be used to specify the disk size for every machine in the master/agent pool. If you specify 0, it will apply the default osDisk size according to the vmSize specified.')
-param userPoolOsDiskSizeGB int = 128
+@description('Optional. Maximum number of pods allocated to system pool. Default is 50.')
+param systemPoolMaxPods int = 50
 
 @description('Required. Resource ID of the monitoring log analytics workspace.')
 param logAnalyticsWorkspaceId string
@@ -77,7 +36,7 @@ param logAnalyticsWorkspaceId string
 param profileAdminUsername string = 'azureuser'
 
 @description('Optional. Override resource group name, used to deploy cluster node resources.')
-param nodeResourceGroup string = 'MC_${resourceGroup().name}_${name}_${location}'
+param nodeResourceGroup string = '${resourceGroup().name}_aks'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' existing = {
   name: virtualNetworkName
@@ -110,9 +69,9 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-07-01' = {
       {
         name: systemPoolName
         count: 1
-        vmSize: 'Standard_B2ms'
+        vmSize: 'Standard_B4ms'
         osDiskSizeGB: 128
-        osDiskType: 'Managed'
+        osDiskType: 'Ephemeral'
         maxPods: systemPoolMaxPods
         osType: 'Linux'
         mode: 'System'
@@ -122,38 +81,6 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-07-01' = {
         enableAutoScaling: false
         enableFIPS: false
         orchestratorVersion: kubernetesVersion
-      }
-      {
-        name: userPoolNameWindows
-        count: userPoolVmCount
-        vmSize: userPoolVmSize
-        osDiskSizeGB: userPoolOsDiskSizeGB
-        osDiskType: userPoolOsDiskType
-        maxPods: 30
-        osType: 'Windows'
-        mode: 'User'
-        osSKU: 'Windows2019'
-        type: 'VirtualMachineScaleSets'
-        vnetSubnetID: vnet::subnetCluster.id
-        enableAutoScaling: false
-        enableFIPS: false
-        orchestratorVersion: userPoolOrchestratorVersion
-      }
-      {
-        name: userPoolNameLinux
-        count: userPoolVmCount
-        vmSize: userPoolVmSize
-        osDiskSizeGB: userPoolOsDiskSizeGB
-        osDiskType: userPoolOsDiskType
-        maxPods: 30
-        osType: 'Linux'
-        mode: 'User'
-        osSKU: 'Ubuntu'
-        type: 'VirtualMachineScaleSets'
-        vnetSubnetID: vnet::subnetCluster.id
-        enableAutoScaling: false
-        enableFIPS: false
-        orchestratorVersion: userPoolOrchestratorVersion
       }
     ]
     linuxProfile: clusterExists ? null : {
@@ -227,7 +154,6 @@ resource _ 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
     principalId: aciconnectorlinuxIdentity.properties.principalId
   }
 }
-
 module assignContributor 'roleAssignment.bicep' = {
   name: 'infra-aks-roleAssignments'
   scope: resourceGroup(nodeResourceGroup)
