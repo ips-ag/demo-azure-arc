@@ -7,7 +7,7 @@ param name string
 param location string = 'westeurope'
 
 @description('Required. Indicator whether AKS cluster already exists.')
-param clusterExists bool
+param aksClusterExists bool
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: name
@@ -35,7 +35,7 @@ module aks 'aks.bicep' = {
   scope: rg
   params: {
     name: 'aks-azurearcdemo'
-    clusterExists: clusterExists
+    clusterExists: aksClusterExists
     logAnalyticsWorkspaceId: logAnalytics.outputs.id
     virtualNetworkName: vnet.outputs.name
   }
