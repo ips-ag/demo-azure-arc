@@ -21,11 +21,10 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Deploy Infrastructure
         uses: azure/CLI@v1
-        working-directory: infra
         with:
           inlineScript: |
             $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
-            az deployment sub create --name demo-azure-arc --location westeurope --template-file resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
+            az deployment sub create --name demo-azure-arc --location westeurope --template-file ./infra/resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
 
       # - name: Deploy Infrastructure
       #   uses: azure/arm-deploy@v1
