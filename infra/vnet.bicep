@@ -4,8 +4,8 @@ param name string
 @description('Optional. Resource location.')
 param location string = resourceGroup().location
 
-@description('Optional. Resource tags.')
-param tags object = resourceGroup().tags
+// @description('Optional. Resource tags.')
+// param tags object = resourceGroup().tags
 
 var subnets = [
   {
@@ -29,7 +29,7 @@ var subnets = [
 resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   name: name
   location: location
-  tags: tags
+  // tags: tags
   properties: {
     addressSpace: {
       addressPrefixes: [ '10.240.0.0/15' ]

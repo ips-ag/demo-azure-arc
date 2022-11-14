@@ -4,8 +4,8 @@ param name string
 @description('Optional. Resource location. Defaults to resource group location.')
 param location string = resourceGroup().location
 
-@description('Optional. Resource tags. Defaults to resource group tags.')
-param tags object = resourceGroup().tags
+// @description('Optional. Resource tags. Defaults to resource group tags.')
+// param tags object = resourceGroup().tags
 
 @description('Required. Flag indicating whether deploying to existing AKS cluster.')
 param clusterExists bool
@@ -53,7 +53,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-01-01' existing = {
 resource aks 'Microsoft.ContainerService/managedClusters@2022-07-01' = {
   name: name
   location: location
-  tags: tags
+  // tags: tags
   identity: {
     type: 'SystemAssigned'
   }
