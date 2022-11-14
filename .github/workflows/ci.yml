@@ -1,0 +1,37 @@
+on: [push]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  infrastructure:
+    runs-on: ubunt-latest
+    name: Deploy Infrastructure
+    environment: Dev
+    env:
+      aksClusterName: aks-demo-azure-arc
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy Infrastructure
+        uses: azure/CLI@v1
+        working-directory: infra
+        with:
+          inlineScript: |
+            $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
+            az deployment sub create --name demo-azure-arc --location westeurope --template-file resourceGroup.bicep aksClusterExists=$aksClusterExists
+
+      # - name: Deploy Infrastructure
+      #   uses: azure/arm-deploy@v1
+      #   id: deploy
+      #   with:
+      #     scope: subscription
+      #     region: westeurope
+      #     deploymentName: demo-azure-arc-resourceGroup
+      #     template: ./infrastructure/resourceGroup.bicep
+      #     failOnStdErr: false
