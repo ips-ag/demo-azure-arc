@@ -4,8 +4,8 @@ param name string
 @description('Optional. Resource location. Defaults to resource group location.')
 param location string = resourceGroup().location
 
-// @description('Optional. Resource tags. Defaults to resource group tags.')
-// param tags object = resourceGroup().tags
+@description('Optional. Resource tags. Defaults to resource group tags.')
+param tags object = resourceGroup().tags
 
 @description('Optional. The workspace daily quota for ingestion.')
 param dailyQuotaGb int = 5
@@ -18,7 +18,7 @@ param retentionInDays int = 30
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: name
   location: location
-  // tags: tags
+  tags: tags
   properties: {
     sku: {
       name: 'PerGB2018'

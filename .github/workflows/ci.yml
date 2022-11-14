@@ -23,4 +23,4 @@ jobs:
         shell: pwsh
         run: |
           $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
-          az deployment sub create --name azurearcdemo --location westeurope --template-file ./infra/resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
+          az deployment sub create --name azurearcdemo --location westeurope --template-file ./infra/resourceGroup.bicep --parameters parameters.json name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
