@@ -10,8 +10,8 @@ jobs:
     name: Deploy Infrastructure
     environment: Dev
     env:
-      resourceGroupName: rg-demo-azure-arc
-      aksClusterName: aks-demo-azure-arc
+      resourceGroupName: rg-ipsazurearcdemo
+      aksClusterName: aks-azurearcdemo
     steps:
       - uses: actions/checkout@v3
         with:
@@ -20,18 +20,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Deploy Infrastructure
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
-            az deployment sub create --name demo-azure-arc --location westeurope --template-file ./infra/resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
-
-      # - name: Deploy Infrastructure
-      #   uses: azure/arm-deploy@v1
-      #   id: deploy
-      #   with:
-      #     scope: subscription
-      #     region: westeurope
-      #     deploymentName: demo-azure-arc-resourceGroup
-      #     template: ./infrastructure/resourceGroup.bicep
-      #     failOnStdErr: false
+        shell: pwsh
+        run: |
+          $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
+          az deployment sub create --name azurearcdemo --location westeurope --template-file ./infra/resourceGroup.bicep --parameters name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists

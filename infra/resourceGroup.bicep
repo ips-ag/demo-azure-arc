@@ -18,7 +18,7 @@ module logAnalytics 'logAnalytics.bicep' = {
   name: '${deployment().name}-logAnalytics'
   scope: rg
   params: {
-    name: 'log-demo-azure-arc'
+    name: 'log-azurearcdemo'
   }
 }
 
@@ -26,7 +26,7 @@ module vnet 'vnet.bicep' = {
   name: '${deployment().name}-vnet'
   scope: rg
   params: {
-    name: 'vnet-demo-azure-arc'
+    name: 'vnet-azurearcdemo'
   }
 }
 
@@ -34,7 +34,7 @@ module aks 'aks.bicep' = {
   name: '${deployment().name}-aks'
   scope: rg
   params: {
-    name: 'aks-demo-azure-arc'
+    name: 'aks-azurearcdemo'
     clusterExists: clusterExists
     logAnalyticsWorkspaceId: logAnalytics.outputs.id
     virtualNetworkName: vnet.outputs.name
