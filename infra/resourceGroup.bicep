@@ -6,12 +6,16 @@ param name string
 @description('Optional. Resource Group location. Default is westeurope.')
 param location string = 'westeurope'
 
+@description('Required. Resource Group tags.')
+param tags object
+
 @description('Required. Indicator whether AKS cluster already exists.')
 param aksClusterExists bool
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: name
   location: location
+  tags: tags
 }
 
 module logAnalytics 'logAnalytics.bicep' = {
