@@ -6,7 +6,7 @@ permissions:
 
 jobs:
   infrastructure:
-    runs-on: ubunt-latest
+    runs-on: ubuntu-latest
     name: Deploy Infrastructure
     environment: Dev
     env:
