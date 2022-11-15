@@ -1,4 +1,8 @@
-on: [push]
+on:
+  push:
+    paths:
+      - infra
+      - .github
 
 permissions:
   issues: write
