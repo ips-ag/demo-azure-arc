@@ -2,14 +2,15 @@
 
 ## Prerequisites
 https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli#prerequisites
-Azure CLI
+<!-- az login
+az account set --subscription ... -->
 az extension add --name connectedk8s
 
 az provider register --namespace Microsoft.Kubernetes
 az provider register --namespace Microsoft.KubernetesConfiguration
 az provider register --namespace Microsoft.ExtendedLocation
 
-### Powershell
+## Azure Arc Cluster
 $resourceGroup="rg-ipsazurearcdemo"
 $aksName="aks-azurearcdemo"
 $resourceLocation="westeurope"
@@ -37,7 +38,7 @@ $logAnalyticsKey=$(az monitor log-analytics workspace get-shared-keys `
 $logAnalyticsKeyEnc=[Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($logAnalyticsKey))
 
 ## App Service on Azure Arc
-### Arc cluster setup
+### Azure Arc Cluster setup
 https://learn.microsoft.com/en-us/azure/app-service/manage-create-arc-environment?tabs=powershell
 az extension add --upgrade --yes --name customlocation
 az extension remove --name appservice-kube
