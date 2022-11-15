@@ -1,8 +1,8 @@
 on:
   push:
     paths:
-      - infra
-      - .github
+      - 'infra/**'
+      - '.github/**'
 
 permissions:
   issues: write
