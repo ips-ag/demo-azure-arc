@@ -1,0 +1,26 @@
+on: [push]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    name: Deploy Infrastructure
+    environment: Dev
+    env:
+      resourceGroupName: rg-ipsazurearcdemo
+      aksClusterName: aks-azurearcdemo
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy Infrastructure
+        shell: pwsh
+        run: |
+          $aksClusterExists = (az aks list --query "[?name=='${{ env.aksClusterName }}'] | length(@)") -gt 0
+          az deployment sub create --name azurearcdemo --location westeurope --template-file ./infra/resourceGroup.bicep --parameters ./infra/parameters.json name=${{ env.resourceGroupName }} aksClusterExists=$aksClusterExists
