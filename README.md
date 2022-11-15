@@ -2,15 +2,20 @@
 
 ## Prerequisites
 https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli#prerequisites
-<!-- az login
-az account set --subscription ... -->
+
+```powershell
+# az login
+# az account set --subscription ...
+
 az extension add --name connectedk8s
 
 az provider register --namespace Microsoft.Kubernetes
 az provider register --namespace Microsoft.KubernetesConfiguration
 az provider register --namespace Microsoft.ExtendedLocation
+```
 
 ## Azure Arc Cluster
+```powershell
 $resourceGroup="rg-ipsazurearcdemo"
 $aksName="aks-azurearcdemo"
 $resourceLocation="westeurope"
@@ -20,8 +25,10 @@ az aks get-credentials -g $resourceGroup -n $aksName --admin --file config
 kubectl get ns --kubeconfig config
 az connectedk8s connect -g $resourceGroup -n $arcClusterName --kube-config config
 az connectedk8s show -g $resourceGroup -n $arcClusterName
+```
 
 ## Log Analytics
+```powershell
 $workspaceName="log-azurearcdemo"
 
 $logAnalyticsWorkspaceId=$(az monitor log-analytics workspace show `
@@ -36,10 +43,13 @@ $logAnalyticsKey=$(az monitor log-analytics workspace get-shared-keys `
     --query primarySharedKey `
     --output tsv)
 $logAnalyticsKeyEnc=[Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($logAnalyticsKey))
+```
 
 ## App Service on Azure Arc
 ### Azure Arc Cluster setup
 https://learn.microsoft.com/en-us/azure/app-service/manage-create-arc-environment?tabs=powershell
+
+```powershell
 az extension add --upgrade --yes --name customlocation
 az extension remove --name appservice-kube
 az extension add --upgrade --yes --name appservice-kube
@@ -79,8 +89,11 @@ $extensionId=$(az k8s-extension show `
     --output tsv)
 
 kubectl get pods -n $namespace --kubeconfig config
+```
 
 ### Custom location
+
+```powershell
 $customLocationName="custom-location" # Name of the custom location
 $connectedClusterId=$(az connectedk8s show --resource-group $resourceGroup --name $arcClusterName --query id --output tsv)
 
@@ -98,19 +111,23 @@ $customLocationId=$(az customlocation show `
     --name $customLocationName `
     --query id `
     --output tsv)
+```
 
 ### App Service Kubernetes Environment
 
+```powershell
 az appservice kube create `
     --resource-group $resourceGroup `
     --name $kubeEnvironmentName `
     --custom-location $customLocationId
 
 az appservice kube show --resource-group $resourceGroup --name $kubeEnvironmentName
-
+```
 
 ### Application
 https://learn.microsoft.com/en-us/azure/app-service/quickstart-arc
+
+```powershell
 az extension add --upgrade --yes --name customlocation
 az extension remove --name appservice-kube
 az extension add --upgrade --yes --name appservice-kube
@@ -126,5 +143,6 @@ az webapp create `
 
 git clone https://github.com/Azure-Samples/nodejs-docs-hello-world
 Compress-Archive -Path ./nodejs-docs-hello-world/* -DestinationPath package.zip -Force
-<!-- az webapp config appsettings set -g $resourceGroup -n $appName --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true -->
+# az webapp config appsettings set -g $resourceGroup -n $appName --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 az webapp deployment source config-zip -g $resourceGroup -n $appName --src package.zip
+```
